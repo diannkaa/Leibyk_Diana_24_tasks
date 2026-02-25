@@ -120,30 +120,76 @@ int main() {
         delete[] arrQ;
     }
 
-    cout << "\n===== СИНХРОННЕ ТА АСИНХРОННЕ ШВИДКЕ СОРТУВАННЯ =====\n";
+    cout << "\n===== СИНХРОННЕ ТА АСИНХРОННЕ СОРТУВАННЯ =====\n";
+
     int arraySize = 150000;
-    int* arraySync = new int[arraySize];
-    int* arrayAsync = new int[arraySize];
+
+    int* arrCountS = new int[arraySize];
+    int* arrCountA = new int[arraySize];
+    for (int i = 0; i < arraySize; i++) {
+        int a = rand() % 10000;
+        arrCountS[i] = arrCountA[i] = a;
+    }
+
+    auto startCountS = high_resolution_clock::now();
+    countingSort(arrCountS, arraySize);
+    double timeCountS = duration<double>(high_resolution_clock::now() - startCountS).count();
+
+    auto startCountA = high_resolution_clock::now();
+    future<void>  futureCount = async(launch::async, countingSort, arrCountA, arraySize);
+    futureCount.get();
+    double timeCountA = duration<double>(high_resolution_clock::now() - startCountA).count();
+
+    cout << "Синхронне сортування підрахунком (" << arraySize << " елементів): " << timeCountS << " сек.\n";
+    cout << "Асинхронне сортування підрахунком (" << arraySize << " елементів): " << timeCountA << " сек.\n";
+
+    delete[] arrCountS;
+    delete[] arrCountA;
+
+    int* arrSelectS = new int[arraySize];
+    int* arrSelectA = new int[arraySize];
+    for (int i = 0; i < arraySize; i++) {
+        int a = rand() % 10000;
+        arrSelectS[i] = arrSelectA[i] = a;
+    }
+
+    auto startSelectS = high_resolution_clock::now();
+    selectionSort(arrSelectS, arraySize);
+    double timeSelectS = duration<double>(high_resolution_clock::now() - startSelectS).count();
+
+    auto startSelectA = high_resolution_clock::now();
+    future<void> futureSelect = async(launch::async, selectionSort, arrSelectA, arraySize);
+    futureSelect.get();
+    double timeSelectA = duration<double>(high_resolution_clock::now() - startSelectA).count();
+
+    cout << "Синхронне сортування вибором (" << arraySize << " елементів): " << timeSelectS << " сек.\n";
+    cout << "Асинхронне сортування вибором (" << arraySize << " елементів): " << timeSelectA << " сек.\n";
+
+    delete[] arrSelectS;
+    delete[] arrSelectA;
+
+    int* arrQuickS = new int[arraySize];
+    int* arrQuickA = new int[arraySize];
 
     for (int i = 0; i < arraySize; i++) {
         int randomValue = rand() % 10000;
-        arraySync[i] = arrayAsync[i] = randomValue;
+        arrQuickS[i] = arrQuickA[i] = randomValue;
     }
 
-    auto sStart = high_resolution_clock::now();
-    quickSort(arraySync, 0, arraySize - 1);
-    double tSync = duration<double>(high_resolution_clock::now() - sStart).count();
+    auto startQuickS = high_resolution_clock::now();
+    quickSort(arrQuickS, 0, arraySize - 1);
+    double timeQuickS = duration<double>(high_resolution_clock::now() - startQuickS).count();
 
-    auto aStart = high_resolution_clock::now();
-    future<void> fut = async(launch::async, quickSort, arrayAsync, 0, arraySize - 1);
-    fut.get();
-    double tAsync = duration<double>(high_resolution_clock::now() - aStart).count();
+    auto startQuickA = high_resolution_clock::now();
+    future<void> futureQuick = async(launch::async, quickSort, arrQuickA, 0, arraySize - 1);
+    futureQuick.get();
+    double timeQuickA = duration<double>(high_resolution_clock::now() - startQuickA).count();
 
-    cout << "Синхронне Швидке сортування (" << arraySize << " елементів): " << tSync << " сек.\n";
-    cout << "Асинхронне Швидке сортування (" << arraySize << " елементів): " << tAsync << " сек.\n";
+    cout << "Синхронне швидке сортування (" << arraySize << " елементів): " << timeQuickS << " сек.\n";
+    cout << "Асинхронне швидке сортування (" << arraySize << " елементів): " << timeQuickA << " сек.\n";
 
-    delete[] arraySync;
-    delete[] arrayAsync;
+    delete[] arrQuickS;
+    delete[] arrQuickA;
 
     cout << "\n*********************************************\n";
     cout << "\tСОРТУВАННЯ МАСИВУ КОРИСТУВАЧА\n";
