@@ -17,7 +17,8 @@ int countWords(const string& sentence) {
                 isInsideWord = true;
                 wordCount++;
             }
-        } else {
+        }
+        else {
             isInsideWord = false;
         }
     }
@@ -59,18 +60,19 @@ void processFile(const string& inputFileName, const string& outputFileName) {
         if (symbol == '.' || symbol == '!' || symbol == '?') {
             int wordCount = countWords(sentence);
 
-            if (minWordCount == -1 || wordCount < minWordCount) {
-                minWordCount = wordCount;
-                shortestSentence = sentence;
+            if (wordCount > 0) {
+                if (minWordCount == -1 || wordCount < minWordCount) {
+                    minWordCount = wordCount;
+                    shortestSentence = sentence;
+                }
             }
 
             sentence = "";
         }
     }
 
-    if (!sentence.empty()) {
-        int wordCount = countWords(sentence);
-
+    int wordCount = countWords(sentence);
+    if (wordCount > 0) {
         if (minWordCount == -1 || wordCount < minWordCount) {
             minWordCount = wordCount;
             shortestSentence = sentence;
@@ -81,7 +83,8 @@ void processFile(const string& inputFileName, const string& outputFileName) {
         outputFile << "Речення з найменшою кількістю слів:\n";
         outputFile << shortestSentence << endl;
         outputFile << "Кількість слів: " << minWordCount << endl;
-    } else {
+    }
+    else {
         outputFile << "Файл порожній або не містить речень." << endl;
     }
 
